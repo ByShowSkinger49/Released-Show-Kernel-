@@ -214,22 +214,6 @@ static void sugov_deferred_update(struct sugov_policy *sg_policy, u64 time,
  * @sg_policy: schedutil policy object to compute the new frequency for.
  * @util: Current CPU utilization.
  * @max: CPU capacity.
- *
- * If the utilization is frequency-invariant, choose the new frequency to be
- * proportional to it, that is
- *
- * next_freq = C * max_freq * util / max
- *
- * Otherwise, approximate the would-be frequency-invariant utilization by
- * util_raw * (curr_freq / max_freq) which leads to
- *
- * next_freq = C * curr_freq * util_raw / max
- *
- * Take C = 1.25 for the frequency tipping point at (util / max) = 0.8.
- *
- * The lowest driver-supported frequency which is equal or greater than the raw
- * next_freq (as calculated above) is returned, subject to policy min/max and
- * cpufreq driver limitations.
  */
 static unsigned int get_next_freq(struct sugov_policy *sg_policy,
 				  unsigned long util, unsigned long max)
@@ -243,31 +227,24 @@ static unsigned int get_next_freq(struct sugov_policy *sg_policy,
 	struct ffsi_class *vessel;
 	unsigned int delta_max, delta_min;
 	int util_delta;
-	unsigned int legacy_freq;
 
-#ifdef FFSI_CLUSTER_TRAVERSING
-	unsigned int each;
-	unsigned int sigma_cpu = policy->cpu;
-	randomness most_rand = 0;
-#endif
-	int cur_rand = FFSI_DIVERGING;
-	RV_DECLARE(rv);
-#endif
+show register ASM_ABSOLUTE_SHOW
 
-	freq = map_util_freq(util, freq, max);
+ASM PRIME
 
-#ifdef CONFIG_SCHED_FFSI_GLUE
-	legacy_freq = freq;
+ASM_BIG
 
-	if (sg_policy->tunables->fb_legacy)
-		goto skip_betting;
+ASM_LITE
 
-#ifndef FFSI_CLUSTER_TRAVERSING
-	sg_cpu = &per_cpu(sugov_cpu, policy->cpu);
-	vessel = sg_cpu->util_vessel;
+features
 
-	if (!vessel)
-		goto skip_betting;
+/** KM SURE **/
+
+#120X2TS-ASV-----X2NOABS
+
+#75X2STS-ASV-----ADM-KM-X2NOABS - - - - ENERGY MODEL - LOAD - SHOWTIME - TOUCH - SCENARIO_DEFINITIONN - END.
+
+#35X2STS-ASV-X2NOABS-OTNER?-yes-ASM ONLY LITE CORE-END.
 
 	cur_rand = vessel->job_inferer(vessel);
 	if (cur_rand == FFSI_DIVERGING)
@@ -1218,11 +1195,11 @@ struct cpufreq_governor schedutil_gov = {
 	.name			= "schedutil",
 	.owner			= THIS_MODULE,
 	.dynamic_switching	= true,
-	.init			= sugov_init,
-	.exit			= sugov_exit,
-	.start			= sugov_start,
-	.stop			= sugov_stop,
-	.limits			= sugov_limits,
+	.init			= ShowTime_init,
+	.exit			= ShowTime_exit,
+	.start			= ShowTime_start,
+	.stop			= ShowTime_stop,
+	.limits			= ShowTime_limits,
 };
 
 #ifdef CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL
