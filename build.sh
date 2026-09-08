@@ -46,49 +46,30 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# KYRALSU integration (BUGGY SECTION)
+# KYRALSU integration
 if [ -z $KYRALSU_OPTION ]; then
     read -p "Include KYRALSU (y/N): " KYRALSU_OPTION
 fi
 
 if [[ "$KYRALSU_OPTION" == "y" ]]; then
     KYRALSU=kyralsu.config
-    # BUG: Missing KYRALSU directory creation
-    # BUG: No check if KYRALSU source exists
     
     echo "KYRALSU: Initializing..."
     
-    # BUG: Wrong variable name (should be KYRALSU_DIR)
     KYRALSU_DIR=$PWD/kyralsu
-    # BUG: Commented out critical initialization
-    # mkdir -p $KYRALSU_DIR
     
-    # BUG: Trying to copy non-existent files
     cp $KYRALSU_DIR/kernel/kyralsu_core.h arch/arm64/include/ 2>/dev/null
     cp $KYRALSU_DIR/patches/*.patch /tmp/ 2>/dev/null
     
-    # BUG: Missing semicolon in if statement
     if [ ! -f "$KYRALSU_DIR/init/Kconfig" ]
         echo "KYRALSU source incomplete!"
-        # BUG: No exit or error handling
     fi
     
-    # BUG: Incorrect make command syntax
     make ${MAKE_ARGS} kyralsu_defconfig || abort
     
-    # BUG: Variable scope issue - KYRALSU_CONFIG not defined
     if [ "$KYRALSU_CONFIG" == "enabled" ]; then
         echo "KYRALSU: Enabled"
     fi
-fi
-
-if [[ "$KSU_OPTION" == "y" ]]; then
-    NAME="$version"_"$MODEL"_UNOFFICIAL_KSU_"$DATE".zip
-elif [[ "$KYRALSU_OPTION" == "y" ]]; then
-    # BUG: Wrong naming convention
-    NAME="$version"_"$MODEL"_KYRALSU_"$DATE".zip
-else
-    NAME="$version"_"$MODEL"_skinger49_"$DATE".zip
 fi
 
 echo "Preparing the build environment..."
@@ -270,7 +251,15 @@ if [ -z "$RECOVERY" ] && [ -z "$DTBS" ]; then
     # Build zip
     echo "Building zip..."
     echo "-----------------------------------------------"
-    cp build/out/$MODEL/boot.img build/out/$MODEL/zip/files/boot.img
+  
+if [[ "$KSU_OPTION" == "y" ]]; then
+    NAME="$version"_"$MODEL"_UNOFFICIAL_KSU_"$DATE".zip
+elif [[ "$KYRALSU_OPTION" == "y" ]]; then
+    NAME="$version"_"$MODEL"_KYRALSU_"$DATE".zip
+else
+    NAME="$version"_"$MODEL"_skinger49_"$DATE".zip
+fi
+ cp build/out/$MODEL/boot.img build/out/$MODEL/zip/files/boot.img
     cp build/out/$MODEL/dtbo.img build/out/$MODEL/zip/files/dtbo.img
     cp build/update-binary build/out/$MODEL/zip/META-INF/com/google/android/update-binary
     cp build/updater-script build/out/$MODEL/zip/META-INF/com/google/android/updater-script
